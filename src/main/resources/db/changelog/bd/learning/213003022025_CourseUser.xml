@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <changeSet id="49e3d0d9-4b06-4042-b26b-142607d83fac" author="thiagoDepizzol">
+        <createTable tableName="lea_courses_users">
+
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="active" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_date" type="datetime"/>
+
+            <column name="created_by" type="varchar(255)"/>
+
+            <column name="last_modified_date" type="datetime"/>
+
+            <column name="last_modified_by" type="varchar(255)"/>
+
+            <column name="lea_course_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="usr_user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

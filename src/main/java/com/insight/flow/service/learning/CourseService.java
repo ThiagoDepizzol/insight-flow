@@ -1,0 +1,97 @@
+package com.insight.flow.service.learning;
+
+import com.insight.flow.entity.learning.Course;
+import com.insight.flow.entity.learning.CourseModule;
+import com.insight.flow.entity.learning.CourseUser;
+import com.insight.flow.repository.learning.CourseRepository;
+import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class CourseService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CourseService.class);
+
+    public final CourseRepository courseRepository;
+
+    public CourseService(final CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
+    }
+
+    public Optional<Course> created(@NotNull final Course course) {
+
+        logger.info("created() -> {}", course);
+
+        final List<CourseModule> modules = Optional.ofNullable(course.getModules())
+                .map(ArrayList::new)
+                .orElseGet(ArrayList::new);
+        course.setModules(null);
+
+        final List<CourseUser> users = Optional.ofNullable(course.getUsers())
+                .map(ArrayList::new)
+                .orElseGet(ArrayList::new);
+        course.setModules(null);
+
+        return Optional.of(courseRepository.save(course));
+
+    }
+
+    public Optional<Course> update(@NotNull final Course oldCourse, @NotNull final Course newCourse) {
+
+        logger.info("update() -> {}, {}", oldCourse, newCourse);
+
+        oldCourse.setName(newCourse.getName());
+        oldCourse.setStatus(newCourse.getStatus());
+        oldCourse.setDescription(newCourse.getDescription());
+        oldCourse.setActive(newCourse.getActive());
+
+        final List<CourseModule> modules = Optional.ofNullable(oldCourse.getModules())
+                .map(ArrayList::new)
+                .orElseGet(ArrayList::new);
+        oldCourse.setModules(null);
+
+        final List<CourseUser> users = Optional.ofNullable(oldCourse.getUsers())
+                .map(ArrayList::new)
+                .orElseGet(ArrayList::new);
+        oldCourse.setModules(null);
+
+        return Optional.of(courseRepository.save(oldCourse));
+
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Course> findAll(@NotNull final Pageable pageable) {
+
+        logger.info("findAll() -> {}", pageable);
+
+        return courseRepository.findAllByActiveTrue(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Course> findById(@NotNull final Long id) {
+
+        logger.info("findById() -> {}", id);
+
+        return courseRepository.findOneActiveTrueById(id);
+    }
+
+
+    public void delete(@NotNull final Course course) {
+
+        logger.info("delete() -> {}", course);
+
+        course.setActive(false);
+
+        courseRepository.save(course);
+
+    }
+}
