@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <changeSet id="2c6111e4-312e-42de-b5ac-20e8a9b18fb7" author="thiagoDepizzol">
+        <createTable tableName="lea_users_courses_evaluations">
+
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="active" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_date" type="datetime"/>
+
+            <column name="created_by" type="varchar(255)"/>
+
+            <column name="last_modified_date" type="datetime"/>
+
+            <column name="last_modified_by" type="varchar(255)"/>
+
+            <column name="usr_user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lea_course_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="rating" type="decimal(12,2)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="comment" type="text"/>
+
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

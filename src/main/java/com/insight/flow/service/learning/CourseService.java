@@ -23,8 +23,14 @@ public class CourseService {
 
     public final CourseRepository courseRepository;
 
-    public CourseService(final CourseRepository courseRepository) {
+    public final CourseUserService courseUserService;
+
+    public final CourseModuleService courseModuleService;
+
+    public CourseService(final CourseRepository courseRepository, final CourseUserService courseUserService, final CourseModuleService courseModuleService) {
         this.courseRepository = courseRepository;
+        this.courseUserService = courseUserService;
+        this.courseModuleService = courseModuleService;
     }
 
     public Optional<Course> created(@NotNull final Course course) {
@@ -41,7 +47,17 @@ public class CourseService {
                 .orElseGet(ArrayList::new);
         course.setModules(null);
 
-        return Optional.of(courseRepository.save(course));
+        return Optional.of(courseRepository.save(course))
+                .map(savedCourse -> {
+                    courseUserService.saveAllAndFlush(savedCourse, users);
+
+                    return savedCourse;
+                })
+                .map(savedCourse -> {
+                    courseModuleService.saveAllAndFlush(savedCourse, modules);
+
+                    return savedCourse;
+                });
 
     }
 
@@ -64,7 +80,17 @@ public class CourseService {
                 .orElseGet(ArrayList::new);
         oldCourse.setModules(null);
 
-        return Optional.of(courseRepository.save(oldCourse));
+        return Optional.of(courseRepository.save(oldCourse))
+                .map(savedCourse -> {
+                    courseUserService.saveAllAndFlush(savedCourse, users);
+
+                    return savedCourse;
+                })
+                .map(savedCourse -> {
+                    courseModuleService.saveAllAndFlush(savedCourse, modules);
+
+                    return savedCourse;
+                });
 
     }
 

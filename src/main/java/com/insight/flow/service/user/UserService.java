@@ -21,11 +21,14 @@ public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
+    private final UserAuthorityService userAuthorityService;
+
     public final PasswordEncoder passwordEncoder;
 
     public final UserRepository userRepository;
 
-    public UserService(final PasswordEncoder passwordEncoder, final UserRepository userRepository) {
+    public UserService(final UserAuthorityService userAuthorityService, final PasswordEncoder passwordEncoder, final UserRepository userRepository) {
+        this.userAuthorityService = userAuthorityService;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
     }
@@ -41,7 +44,12 @@ public class UserService {
                 .orElseGet(ArrayList::new);
         user.setRoles(null);
 
-        return Optional.of(userRepository.save(user));
+        return Optional.of(userRepository.save(user))
+                .map(savedUser -> {
+                    userAuthorityService.saveAllAndFlush(savedUser, roles);
+
+                    return savedUser;
+                });
 
     }
 
@@ -59,7 +67,12 @@ public class UserService {
                 .orElseGet(ArrayList::new);
         oldUser.setRoles(null);
 
-        return Optional.of(userRepository.save(oldUser));
+        return Optional.of(userRepository.save(oldUser))
+                .map(savedUser -> {
+                    userAuthorityService.saveAllAndFlush(savedUser, roles);
+
+                    return savedUser;
+                });
 
     }
 
