@@ -1,6 +1,7 @@
 package com.insight.flow.controller.learning;
 
 import com.insight.flow.dto.learning.UserCourseEvaluationDTO;
+import com.insight.flow.dto.learning.filter.EvaluationFilterDTO;
 import com.insight.flow.entity.learning.UserCourseEvaluation;
 import com.insight.flow.mapper.learning.UserCourseEvaluationMapper;
 import com.insight.flow.service.learning.UserCourseEvaluationService;
@@ -85,5 +86,27 @@ public class UserCourseEvaluationController {
 
         return ResponseEntity.noContent()
                 .build();
+    }
+
+    @PostMapping("evaluate")
+    public ResponseEntity<UserCourseEvaluationDTO> evaluate(@RequestBody final UserCourseEvaluation evaluation) {
+
+        log.info("POST -> lea/users-courses-evaluations/evaluate -> {}", evaluation);
+
+        return ResponseEntity.ok(userCourseEvaluationService.evaluate(evaluation)
+                .map(courseEvaluationMapper::fromDto)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot created evaluation")));
+    }
+
+    @GetMapping("history")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<UserCourseEvaluationDTO>> history(@RequestBody final EvaluationFilterDTO filterDTO, final Pageable page) {
+
+        log.info("GET -> /lea/users-courses-evaluations -> {},{}", filterDTO, page);
+
+        return ResponseEntity.ok(userCourseEvaluationService.history(filterDTO, page)
+                .stream()
+                .map(courseEvaluationMapper::fromDto)
+                .collect(Collectors.toList()));
     }
 }

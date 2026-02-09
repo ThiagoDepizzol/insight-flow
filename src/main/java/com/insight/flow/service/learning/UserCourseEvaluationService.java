@@ -1,5 +1,6 @@
 package com.insight.flow.service.learning;
 
+import com.insight.flow.dto.learning.filter.EvaluationFilterDTO;
 import com.insight.flow.entity.learning.UserCourseEvaluation;
 import com.insight.flow.repository.learning.UserCourseEvaluationRepository;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -72,4 +74,25 @@ public class UserCourseEvaluationService {
         userCourseEvaluationRepository.save(evaluation);
 
     }
+
+    public Optional<UserCourseEvaluation> evaluate(@NotNull final UserCourseEvaluation evaluation) {
+
+        logger.info("evaluate() -> {}", evaluation);
+
+        return Optional.of(userCourseEvaluationRepository.save(evaluation));
+
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserCourseEvaluation> history(@NotNull final EvaluationFilterDTO filterDTO, @NotNull final Pageable pageable) {
+
+        logger.info("history() -> {}, {}", filterDTO, pageable);
+
+        final Long courseId = filterDTO.getCourseId();
+        final Long userId = filterDTO.getUserId();
+        final BigDecimal rating = filterDTO.getRating();
+
+        return userCourseEvaluationRepository.history(courseId, userId, rating, pageable);
+    }
+
 }

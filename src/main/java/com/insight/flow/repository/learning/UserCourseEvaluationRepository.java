@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public interface UserCourseEvaluationRepository extends JpaRepository<UserCourseEvaluation, Long> {
@@ -19,4 +20,22 @@ public interface UserCourseEvaluationRepository extends JpaRepository<UserCourse
                     "where evaluations.active = true " +//
                     "  and evaluations.id = :evaluationId ")
     Optional<UserCourseEvaluation> findOneActiveTrueById(@Param("evaluationId") Long evaluationId);
+
+    @Query(nativeQuery = true,
+            value = "select evaluations.* " +//
+                    "from lea_users_courses_evaluations evaluations " +//
+                    "         join usr_users users " +//
+                    "              on evaluations.usr_user_id = users.id " +//
+                    "                  and users.active = true " +//
+                    "         join lea_courses courses " +//
+                    "              on evaluations.lea_course_id = courses.id " +//
+                    "                  and courses.active = true " +//
+                    "where evaluations.active = true " +//
+                    "  and (:courseId is null " +//
+                    "    or courses.id = :courseId) " +//
+                    "  and (:userId is null " +//
+                    "    or users.id = :userId) " +//
+                    "  and (:rating is null " +//
+                    "    or evaluations.id >= :rating) ")
+    Page<UserCourseEvaluation> history(@Param("courseId") Long courseId, @Param("userId") Long userId, @Param("rating") BigDecimal rating, Pageable pageable);
 }
