@@ -109,4 +109,5 @@ public class UserCourseEvaluationController {
                 .map(courseEvaluationMapper::fromDto)
                 .collect(Collectors.toList()));
     }
+    
 }

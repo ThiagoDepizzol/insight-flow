@@ -1,7 +1,7 @@
 package com.insight.flow.controller.authentication;
 
-import com.insight.flow.dto.LoginDTO;
-import com.insight.flow.dto.ResetPasswordDTO;
+import com.insight.flow.dto.authentication.LoginDTO;
+import com.insight.flow.dto.authentication.ResetPasswordDTO;
 import com.insight.flow.service.authentication.LoginService;
 import com.insight.flow.utils.MessageResponseDTO;
 import org.slf4j.Logger;

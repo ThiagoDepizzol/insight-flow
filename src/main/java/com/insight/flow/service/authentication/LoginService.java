@@ -1,6 +1,6 @@
 package com.insight.flow.service.authentication;
 
-import com.insight.flow.dto.ResetPasswordDTO;
+import com.insight.flow.dto.authentication.ResetPasswordDTO;
 import com.insight.flow.entity.user.User;
 import com.insight.flow.repository.user.UserRepository;
 import com.insight.flow.utils.exceptions.InvalidPasswordException;

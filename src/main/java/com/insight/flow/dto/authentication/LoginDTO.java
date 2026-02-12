@@ -1,4 +1,4 @@
-package com.insight.flow.dto;
+package com.insight.flow.dto.authentication;
 
 public class LoginDTO {
 

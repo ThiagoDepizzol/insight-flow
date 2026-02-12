@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -30,6 +31,9 @@ public class UserCourseEvaluation extends BaseEntity implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = "users", allowSetters = true)
     private Course course;
+
+    @NotNull
+    private Instant evaluationDate;
 
     @NotNull
     private BigDecimal rating;
@@ -59,6 +63,14 @@ public class UserCourseEvaluation extends BaseEntity implements Serializable {
 
     public void setCourse(Course course) {
         this.course = course;
+    }
+
+    public Instant getEvaluationDate() {
+        return evaluationDate;
+    }
+
+    public void setEvaluationDate(Instant evaluationDate) {
+        this.evaluationDate = evaluationDate;
     }
 
     public BigDecimal getRating() {

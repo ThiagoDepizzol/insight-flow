@@ -1,8 +1,11 @@
 package com.insight.flow.service.learning;
 
 import com.insight.flow.dto.learning.filter.EvaluationFilterDTO;
+import com.insight.flow.dto.report.ReportDTO;
 import com.insight.flow.entity.learning.UserCourseEvaluation;
+import com.insight.flow.mapper.report.ReportMapper;
 import com.insight.flow.repository.learning.UserCourseEvaluationRepository;
+import com.insight.flow.service.report.ReportExportService;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +14,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserCourseEvaluationService {
@@ -21,8 +29,14 @@ public class UserCourseEvaluationService {
 
     public final UserCourseEvaluationRepository userCourseEvaluationRepository;
 
-    public UserCourseEvaluationService(final UserCourseEvaluationRepository userCourseEvaluationRepository) {
+    public final ReportExportService reportExportService;
+
+    public final ReportMapper reportMapper;
+
+    public UserCourseEvaluationService(final UserCourseEvaluationRepository userCourseEvaluationRepository, final ReportExportService reportExportService, final ReportMapper reportMapper) {
         this.userCourseEvaluationRepository = userCourseEvaluationRepository;
+        this.reportExportService = reportExportService;
+        this.reportMapper = reportMapper;
     }
 
     public Optional<UserCourseEvaluation> created(@NotNull final UserCourseEvaluation evaluation) {
@@ -93,6 +107,23 @@ public class UserCourseEvaluationService {
         final BigDecimal rating = filterDTO.getRating();
 
         return userCourseEvaluationRepository.history(courseId, userId, rating, pageable);
+    }
+
+    @Transactional
+    public void exportWeeklyFeedbackReport(@NotNull final Instant initialDate, @NotNull final Instant finalDate) {
+
+        logger.info("exportWeeklyFeedbackReport() -> {}, {}", initialDate, finalDate);
+
+        final List<ReportDTO> evaluationsDTO = userCourseEvaluationRepository.getAllByInitialDateAndFinalDate(initialDate, finalDate)
+                .stream()
+                .map(reportMapper::fromDto)
+                .collect(Collectors.toList());
+
+        final ByteArrayInputStream csv = reportExportService.generateCsv(evaluationsDTO);
+
+        final String archiveName = "report-" + LocalDate.now() + ".csv";
+
+        reportExportService.uploadFile(archiveName, csv);
     }
 
 }
