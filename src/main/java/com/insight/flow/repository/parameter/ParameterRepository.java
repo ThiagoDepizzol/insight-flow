@@ -19,4 +19,12 @@ public interface ParameterRepository extends JpaRepository<Parameter, Long> {
                     "where parameters.active = true " +//
                     "  and parameters.id = :parameterId ")
     Optional<Parameter> findOneActiveTrueById(@Param("parameterId") Long parameterId);
+
+    @Query(nativeQuery = true,
+            value = "select parameters.* " +//
+                    "from par_parameters parameters " +//
+                    "where parameters.active = true " +//
+                    "  and parameters.status = 'ACTIVE' ")
+    Optional<Parameter> findOneStatusActive();
+
 }

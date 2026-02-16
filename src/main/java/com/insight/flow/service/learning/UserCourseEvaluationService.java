@@ -1,10 +1,13 @@
 package com.insight.flow.service.learning;
 
+import com.insight.flow.dto.learning.EvaluationMailDTO;
 import com.insight.flow.dto.learning.filter.EvaluationFilterDTO;
 import com.insight.flow.dto.report.ReportDTO;
 import com.insight.flow.entity.learning.UserCourseEvaluation;
 import com.insight.flow.mapper.report.ReportMapper;
 import com.insight.flow.repository.learning.UserCourseEvaluationRepository;
+import com.insight.flow.service.mail.MailService;
+import com.insight.flow.service.parameter.ParameterService;
 import com.insight.flow.service.report.ReportExportService;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -31,12 +34,23 @@ public class UserCourseEvaluationService {
 
     public final ReportExportService reportExportService;
 
+    public final ParameterService parameterService;
+
     public final ReportMapper reportMapper;
 
-    public UserCourseEvaluationService(final UserCourseEvaluationRepository userCourseEvaluationRepository, final ReportExportService reportExportService, final ReportMapper reportMapper) {
+    public final MailService mailService;
+
+
+    public UserCourseEvaluationService(final UserCourseEvaluationRepository userCourseEvaluationRepository,
+                                       final ReportExportService reportExportService,
+                                       final ParameterService parameterService,
+                                       final ReportMapper reportMapper,
+                                       final MailService mailService) {
         this.userCourseEvaluationRepository = userCourseEvaluationRepository;
         this.reportExportService = reportExportService;
+        this.parameterService = parameterService;
         this.reportMapper = reportMapper;
+        this.mailService = mailService;
     }
 
     public Optional<UserCourseEvaluation> created(@NotNull final UserCourseEvaluation evaluation) {
@@ -93,7 +107,12 @@ public class UserCourseEvaluationService {
 
         logger.info("evaluate() -> {}", evaluation);
 
-        return Optional.of(userCourseEvaluationRepository.save(evaluation));
+        return Optional.of(userCourseEvaluationRepository.save(evaluation))
+                .map(savedEvaluated -> {
+                    sendNotificationForNotesBelowMedia(savedEvaluated);
+
+                    return savedEvaluated;
+                });
 
     }
 
@@ -124,6 +143,25 @@ public class UserCourseEvaluationService {
         final String archiveName = "report-" + LocalDate.now() + ".csv";
 
         reportExportService.uploadFile(archiveName, csv);
+    }
+
+    @Transactional
+    public void sendNotificationForNotesBelowMedia(@NotNull final UserCourseEvaluation evaluation) {
+
+        logger.info("sendNotificationForNotesBelowMedia() -> {}", evaluation);
+
+
+        parameterService.findOneStatusActive()
+                .ifPresent(parameter -> {
+
+                    if (evaluation.getRating().compareTo(parameter.getRating()) < 0) {
+
+                        final EvaluationMailDTO dto = new EvaluationMailDTO();
+
+                        mailService.sendNotificationLowGrade(dto);
+
+                    }
+                });
     }
 
 }

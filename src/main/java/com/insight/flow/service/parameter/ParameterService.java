@@ -70,4 +70,12 @@ public class ParameterService {
         parameterRepository.save(parameter);
 
     }
+
+    @Transactional(readOnly = true)
+    public Optional<Parameter> findOneStatusActive() {
+
+        logger.info("findOneStatusActive()");
+
+        return parameterRepository.findOneStatusActive();
+    }
 }

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<html xmlns:th="http://www.thymeleaf.org">
+<body style="margin:0; padding:0; background-color:#f4f6f8; font-family: Arial, Helvetica, sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding: 20px;">
+    <tr>
+        <td align="center">
+
+            <!-- Container -->
+            <table width="600" cellpadding="0" cellspacing="0"
+                   style="background-color:#ffffff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); overflow:hidden;">
+
+                <!-- Header -->
+                <tr>
+                    <td style="background-color:#dc3545; padding:20px; text-align:center;">
+                        <h2 style="color:#ffffff; margin:0;">
+                            ⚠️ Curso com avaliação abaixo da média
+                        </h2>
+                    </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                    <td style="padding:30px; color:#333333; font-size:15px; line-height:1.6;">
+
+                        <p>
+                            Olá, <strong th:text="${creatorName}">Nome do criador</strong>.
+                        </p>
+
+                        <p>
+                            O curso
+                            <strong th:text="${courseName}" style="color:#0d6efd;">
+                                Nome do curso
+                            </strong>
+                            recebeu uma avaliação abaixo da média definida.
+                        </p>
+
+                        <!-- Info box -->
+                        <table width="100%" cellpadding="0" cellspacing="0"
+                               style="margin-top:20px; border:1px solid #e9ecef; border-radius:6px;">
+
+                            <tr>
+                                <td style="padding:12px; background-color:#f8f9fa;">
+                                    <strong>Curso:</strong>
+                                </td>
+                                <td style="padding:12px;">
+                                    <span th:text="${courseName}">Nome do curso</span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:12px; background-color:#f8f9fa;">
+                                    <strong>Nota recebida:</strong>
+                                </td>
+                                <td style="padding:12px;">
+                                    <span th:text="${grade}"
+                                          style="color:#dc3545; font-weight:bold; font-size:18px;">
+                                        0
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:12px; background-color:#f8f9fa;">
+                                    <strong>Data da avaliação:</strong>
+                                </td>
+                                <td style="padding:12px;">
+                                    <span th:text="${evaluationDate}">01/01/2026</span>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        <p style="margin-top:25px;">
+                            Recomendamos revisar o conteúdo do curso e considerar melhorias para aumentar a satisfação dos alunos.
+                        </p>
+
+                        <p style="margin-top:30px;">
+                            Atenciosamente,<br>
+                            <strong>Sistema de Cursos</strong>
+                        </p>
+
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="background-color:#f8f9fa; padding:15px; text-align:center; font-size:12px; color:#6c757d;">
+                        Este é um email automático. Não responda.
+                    </td>
