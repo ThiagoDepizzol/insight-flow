@@ -26,7 +26,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="adm_module_id" type="bigint">
+            <column name="authority" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
 

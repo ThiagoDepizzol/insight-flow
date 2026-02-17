@@ -1,0 +1,49 @@
+name: Deploy Spring Boot to EC2 Ubuntu
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: 21
+
+      - name: Build project
+        run: mvn clean package -DskipTests
+
+      - name: Copy jar to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "target/*.jar"
+          target: "/home/ubuntu/app"
+
+      - name: Run application
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            
+            pkill -f '.jar' || true
+            
+            cd /home/ubuntu/app
+            
+            nohup java -jar target/*.jar > app.log 2>&1 &

@@ -5,6 +5,7 @@ import com.insight.flow.entity.base.BaseEntity;
 import com.insight.flow.enumerated.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.Where;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -34,7 +35,13 @@ public class Course extends BaseEntity implements Serializable {
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = "courses", allowSetters = true)
-    private Set<CourseUser> users = new HashSet<>();
+    @Where(clause = "type = 'TEACHER'")
+    private Set<CourseUser> teachers = new HashSet<>();
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = "courses", allowSetters = true)
+    @Where(clause = "type = 'STUDENT'")
+    private Set<CourseUser> students = new HashSet<>();
 
     public Course() {
     }
@@ -79,12 +86,20 @@ public class Course extends BaseEntity implements Serializable {
         this.modules = modules;
     }
 
-    public Set<CourseUser> getUsers() {
-        return users;
+    public Set<CourseUser> getTeachers() {
+        return teachers;
     }
 
-    public void setUsers(Set<CourseUser> users) {
-        this.users = users;
+    public void setTeachers(Set<CourseUser> teachers) {
+        this.teachers = teachers;
+    }
+
+    public Set<CourseUser> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<CourseUser> students) {
+        this.students = students;
     }
 
     @Override

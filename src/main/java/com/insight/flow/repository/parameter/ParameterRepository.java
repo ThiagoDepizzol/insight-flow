@@ -27,4 +27,10 @@ public interface ParameterRepository extends JpaRepository<Parameter, Long> {
                     "  and parameters.status = 'ACTIVE' ")
     Optional<Parameter> findOneStatusActive();
 
+    @Query(nativeQuery = true,
+            value = "select exists(select true " +//
+                    "              from par_parameters parameters " +//
+                    "              where parameters.active = true " +//
+                    "                and parameters.status = 'ACTIVE') ")
+    boolean hasParameterActive();
 }

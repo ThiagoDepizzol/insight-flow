@@ -3,6 +3,7 @@ package com.insight.flow.entity.learning;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.insight.flow.entity.base.BaseEntity;
 import com.insight.flow.entity.user.User;
+import com.insight.flow.enumerated.CourseUserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -29,6 +30,11 @@ public class CourseUser extends BaseEntity implements Serializable {
     @JsonIgnoreProperties(value = "modules", allowSetters = true)
     private User user;
 
+    @NotNull
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CourseUserType type;
+
     public CourseUser() {
     }
 
@@ -54,6 +60,14 @@ public class CourseUser extends BaseEntity implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public CourseUserType getType() {
+        return type;
+    }
+
+    public void setType(CourseUserType type) {
+        this.type = type;
     }
 
     @Override

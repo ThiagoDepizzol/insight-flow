@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,6 +33,7 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('SYSTEM_ADMIN', 'USER')")
     public ResponseEntity<UserDTO> created(@RequestBody final User user) {
 
         log.info("POST -> usr/users -> {}", user);
@@ -42,6 +44,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SYSTEM_ADMIN', 'USER')")
     public ResponseEntity<UserDTO> update(@PathVariable final Long id, @RequestBody final User user) {
 
         log.info("PUT -> usr/users/{id} -> {}, {}", id, user);
@@ -54,6 +57,7 @@ public class UserController {
 
     @GetMapping
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAnyAuthority('SYSTEM_ADMIN')")
     public ResponseEntity<List<UserDTO>> findAll(final Pageable page) {
 
         log.info("GET -> /usr/users -> {}", page);
@@ -66,6 +70,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAnyAuthority('SYSTEM_ADMIN', 'USER')")
     public ResponseEntity<UserDTO> findById(@PathVariable final Long id) {
 
         log.info("GET -> /usr/users/{id} -> {} ", id);
@@ -76,6 +81,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SYSTEM_ADMIN', 'USER')")
     public ResponseEntity<?> delete(@PathVariable final Long id) {
 
         log.info("DELETE -> usr/users/{id} -> {}", id);

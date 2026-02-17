@@ -1,0 +1,31 @@
+active,created_date,created_by,last_modified_date,last_modified_by,name,status,description
+true,2026-02-16T10:00:00,system,2026-02-16T10:00:00,system,Java,ACTIVE,Linguagem de programação orientada a objetos amplamente usada para aplicações corporativas e web.
+true,2026-02-16T10:05:00,system,2026-02-16T10:05:00,system,Spring Boot,ACTIVE,Framework Java para desenvolvimento rápido de aplicações standalone e microservices.
+true,2026-02-16T10:10:00,system,2026-02-16T10:10:00,system,Angular,ACTIVE,Framework front-end para construir interfaces web modernas usando TypeScript.
+true,2026-02-16T10:15:00,system,2026-02-16T10:15:00,system,React,ACTIVE,Biblioteca JavaScript para construção de interfaces de usuário reativas e componentes reutilizáveis.
+true,2026-02-16T10:20:00,system,2026-02-16T10:20:00,system,Node.js,ACTIVE,Plataforma JavaScript para execução de código do lado servidor ideal para aplicações escaláveis.
+true,2026-02-16T10:25:00,system,2026-02-16T10:25:00,system,Python,ACTIVE,Linguagem de programação versátil usada para ciência de dados web e automação.
+true,2026-02-16T10:30:00,system,2026-02-16T10:30:00,system,Docker,ACTIVE,Plataforma para criar testar e gerenciar containers de aplicações.
+true,2026-02-16T10:35:00,system,2026-02-16T10:35:00,system,Kubernetes,ACTIVE,Sistema de orquestração de containers para automação de deploy scaling e gerenciamento.
+true,2026-02-16T10:40:00,system,2026-02-16T10:40:00,system,MySQL,ACTIVE,Sistema de gerenciamento de banco de dados relacional de código aberto.
+true,2026-02-16T10:45:00,system,2026-02-16T10:45:00,system,AWS,ACTIVE,Serviço de nuvem que oferece infraestrutura escalável e serviços computacionais sob demanda.
+true,2026-02-16T10:50:00,system,2026-02-16T10:50:00,system,TypeScript,ACTIVE,Extensão do JavaScript que adiciona tipagem estática para desenvolvimento mais seguro.
+true,2026-02-16T10:55:00,system,2026-02-16T10:55:00,system,HTML5,ACTIVE,Linguagem de marcação padrão para criação de páginas web.
+true,2026-02-16T11:00:00,system,2026-02-16T11:00:00,system,CSS3,ACTIVE,Linguagem de estilo utilizada para formatar visualmente páginas web.
+true,2026-02-16T11:05:00,system,2026-02-16T11:05:00,system,JavaScript,ACTIVE,Linguagem de programação essencial para desenvolvimento web front-end.
+true,2026-02-16T11:10:00,system,2026-02-16T11:10:00,system,SQL,ACTIVE,Linguagem padrão para gerenciamento e consulta de bancos de dados relacionais.
+true,2026-02-16T11:15:00,system,2026-02-16T11:15:00,system,Git,ACTIVE,Sistema de controle de versão distribuído para gerenciamento de código-fonte.
+true,2026-02-16T11:20:00,system,2026-02-16T11:20:00,system,GitHub,ACTIVE,Plataforma de hospedagem de código-fonte com funcionalidades de versionamento e colaboração.
+true,2026-02-16T11:25:00,system,2026-02-16T11:25:00,system,REST API,ACTIVE,Arquitetura para comunicação entre sistemas via HTTP utilizada em microservices e web apps.
+true,2026-02-16T11:30:00,system,2026-02-16T11:30:00,system,GraphQL,ACTIVE,Linguagem de consulta para APIs que permite obter exatamente os dados necessários.
+true,2026-02-16T11:35:00,system,2026-02-16T11:35:00,system,PHP,ACTIVE,Linguagem de programação amplamente usada no desenvolvimento web e back-end.
+true,2026-02-16T11:40:00,system,2026-02-16T11:40:00,system,Ruby on Rails,ACTIVE,Framework Ruby para desenvolvimento ágil de aplicações web.
+true,2026-02-16T11:45:00,system,2026-02-16T11:45:00,system,Swift,ACTIVE,Linguagem de programação da Apple para desenvolvimento iOS e macOS.
+true,2026-02-16T11:50:00,system,2026-02-16T11:50:00,system,Flutter,ACTIVE,Framework UI da Google para criação de aplicações nativas multiplataforma com Dart.
+true,2026-02-16T11:55:00,system,2026-02-16T11:55:00,system,Dart,ACTIVE,Linguagem de programação usada com Flutter para desenvolvimento de apps mobile e web.
+true,2026-02-16T12:00:00,system,2026-02-16T12:00:00,system,MongoDB,ACTIVE,Banco de dados NoSQL orientado a documentos altamente escalável.
+true,2026-02-16T12:05:00,system,2026-02-16T12:05:00,system,PostgreSQL,ACTIVE,Banco de dados relacional avançado e open-source com suporte a SQL avançado.
+true,2026-02-16T12:10:00,system,2026-02-16T12:10:00,system,Redis,ACTIVE,Banco de dados em memória para caching e aplicações de alta performance.
+true,2026-02-16T12:15:00,system,2026-02-16T12:15:00,system,ElasticSearch,ACTIVE,Motor de busca distribuído e análise de dados em tempo real.
+true,2026-02-16T12:20:00,system,2026-02-16T12:20:00,system,CI/CD,ACTIVE,Prática de integração e entrega contínua para acelerar o desenvolvimento e deploy de software.
+true,2026-02-16T12:25:00,system,2026-02-16T12:25:00,system,Terraform,ACTIVE,Ferramenta para infraestrutura como código permitindo provisionamento de recursos na nuvem.

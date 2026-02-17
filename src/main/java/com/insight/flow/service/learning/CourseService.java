@@ -42,14 +42,24 @@ public class CourseService {
                 .orElseGet(ArrayList::new);
         course.setModules(null);
 
-        final List<CourseUser> users = Optional.ofNullable(course.getUsers())
+        final List<CourseUser> teachers = Optional.ofNullable(course.getTeachers())
                 .map(ArrayList::new)
                 .orElseGet(ArrayList::new);
-        course.setModules(null);
+        course.setTeachers(null);
+
+        final List<CourseUser> students = Optional.ofNullable(course.getStudents())
+                .map(ArrayList::new)
+                .orElseGet(ArrayList::new);
+        course.setStudents(null);
 
         return Optional.of(courseRepository.save(course))
                 .map(savedCourse -> {
-                    courseUserService.saveAllAndFlush(savedCourse, users);
+                    courseUserService.saveAllAndFlush(savedCourse, teachers);
+
+                    return savedCourse;
+                })
+                .map(savedCourse -> {
+                    courseUserService.saveAllAndFlush(savedCourse, students);
 
                     return savedCourse;
                 })
@@ -75,14 +85,24 @@ public class CourseService {
                 .orElseGet(ArrayList::new);
         oldCourse.setModules(null);
 
-        final List<CourseUser> users = Optional.ofNullable(oldCourse.getUsers())
+        final List<CourseUser> teachers = Optional.ofNullable(oldCourse.getTeachers())
                 .map(ArrayList::new)
                 .orElseGet(ArrayList::new);
-        oldCourse.setModules(null);
+        oldCourse.setTeachers(null);
+
+        final List<CourseUser> students = Optional.ofNullable(oldCourse.getStudents())
+                .map(ArrayList::new)
+                .orElseGet(ArrayList::new);
+        oldCourse.setStudents(null);
 
         return Optional.of(courseRepository.save(oldCourse))
                 .map(savedCourse -> {
-                    courseUserService.saveAllAndFlush(savedCourse, users);
+                    courseUserService.saveAllAndFlush(savedCourse, teachers);
+
+                    return savedCourse;
+                })
+                .map(savedCourse -> {
+                    courseUserService.saveAllAndFlush(savedCourse, students);
 
                     return savedCourse;
                 })

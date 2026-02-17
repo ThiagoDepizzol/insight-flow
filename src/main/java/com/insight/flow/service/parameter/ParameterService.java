@@ -2,6 +2,7 @@ package com.insight.flow.service.parameter;
 
 import com.insight.flow.entity.parameter.Parameter;
 import com.insight.flow.repository.parameter.ParameterRepository;
+import com.insight.flow.utils.exceptions.SystemParameterRegisteredException;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,13 @@ public class ParameterService {
     public Optional<Parameter> created(@NotNull final Parameter parameter) {
 
         logger.info("created() -> {}", parameter);
+
+        if (parameterRepository.hasParameterActive()) {
+
+            logger.info("Parâmetro do sistema já cadastrado");
+
+            throw new SystemParameterRegisteredException("Parâmetro do sistema já cadastrado");
+        }
 
         return Optional.of(parameterRepository.save(parameter));
 

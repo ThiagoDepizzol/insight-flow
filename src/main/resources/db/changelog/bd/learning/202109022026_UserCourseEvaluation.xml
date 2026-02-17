@@ -33,7 +33,7 @@
             <column name="evaluation_date" type="datetime"/>
 
             <column name="rating" type="decimal(12,2)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
 
             <column name="comment" type="text"/>

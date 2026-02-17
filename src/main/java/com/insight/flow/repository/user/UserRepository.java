@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAllByActiveTrue(Pageable pageable);
 
+    Optional<User> findByEmailAndActiveTrue(String email);
+
     @Query(nativeQuery = true,
             value = "select users.* " +//
                     "from usr_users users " +//
@@ -20,5 +22,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     "  and users.id = :userId ")
     Optional<User> findOneActiveTrueById(@Param("userId") Long userId);
 
-    Optional<User> findByEmailAndActiveTrue(String email);
+    @Query("select u " +//
+            "from User u " +//
+            "        left join fetch u.roles r " +//
+            "where u.email = :email " +//
+            "  and u.active = true " +//
+            "  and r.active = true ")
+    Optional<User> findByEmailWithAuthorities(String email);
+
 }

@@ -30,11 +30,20 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="description" type="text">
-                <constraints nullable="false" unique="true"/>
-            </column>
+            <column name="description" type="text"/>
 
         </createTable>
     </changeSet>
+
+    <changeSet id="4e1d0184-4f47-4f06-81c9-34afb5c4463c" author="thiagoDepizzol">
+        <loadData file="classpath:data/course.csv"
+                  separator=","
+                  tableName="lea_courses">
+            <column name="description" type="text"/>
+            <column name="created_date" type="datetime"/>
+            <column name="last_modified_date" type="datetime"/>
+        </loadData>
+    </changeSet>
+
 
 </databaseChangeLog>
