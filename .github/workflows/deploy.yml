@@ -3,7 +3,7 @@ name: Deploy Spring Boot via SSM
 on:
   push:
     branches:
-      - release   # sua branch de deploy
+      - release  # branch de deploy
 
 jobs:
   deploy:
@@ -11,11 +11,11 @@ jobs:
 
     steps:
 
-      # 1️⃣ Pegar o código
+      # 1️⃣ Checkout do código
       - name: Checkout código
         uses: actions/checkout@v4
 
-      # 2️⃣ Configurar Java
+      # 2️⃣ Setup Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -47,13 +47,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 6️⃣ Subir JAR para S3
+      # 6️⃣ Upload do JAR para S3
       - name: Upload JAR para S3
         run: |
           echo "Upload do JAR para S3"
           aws s3 cp "$JAR_FILE" s3://${{ secrets.S3_BUCKET_NAME }}/app.jar --region ${{ secrets.AWS_REGION }}
 
-      # 7️⃣ Deploy na EC2 via SSM
+      # 7️⃣ Deploy na EC2 via SSM (como root)
       - name: Deploy na EC2 via SSM
         run: |
           aws ssm send-command \
@@ -62,9 +62,9 @@ jobs:
             --comment "Deploy app" \
             --parameters '{"commands":[
               "mkdir -p /home/ec2-user/app",
-              "sudo chown ec2-user:ec2-user /home/ec2-user/app",
               "aws s3 cp s3://'${{ secrets.S3_BUCKET_NAME }}'/app.jar /home/ec2-user/app/app.jar --region '${{ secrets.AWS_REGION }}'",
               "pkill -f app.jar || true",
-              "nohup java -jar /home/ec2-user/app/app.jar > /home/ec2-user/app/app.log 2>&1 &"
+              "nohup java -jar /home/ec2-user/app/app.jar > /home/ec2-user/app/app.log 2>&1 &",
+              "aws s3 cp /home/ec2-user/app/app.log s3://'${{ secrets.S3_BUCKET_NAME }}'/app.log --region '${{ secrets.AWS_REGION }}'"
             ]}' \
             --region ${{ secrets.AWS_REGION }}
