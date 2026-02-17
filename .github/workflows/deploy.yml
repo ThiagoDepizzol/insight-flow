@@ -3,7 +3,7 @@ name: Deploy Spring Boot via SSM
 on:
   push:
     branches:
-      - release   # sua branch de deploy
+      - release # sua branch de deploy
 
 jobs:
   deploy:
