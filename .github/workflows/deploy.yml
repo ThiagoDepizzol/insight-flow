@@ -1,9 +1,9 @@
-name: Deploy EC2 via SSM
+name: Deploy Spring Boot via SSM
 
 on:
   push:
     branches:
-      - release    # ou sua branch
+      - release   # sua branch de deploy
 
 jobs:
   deploy:
@@ -11,9 +11,22 @@ jobs:
 
     steps:
 
+      # 1️⃣ Pegar o código
       - name: Checkout código
         uses: actions/checkout@v4
 
+      # 2️⃣ Configurar Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # 3️⃣ Buildar Spring Boot
+      - name: Build Spring Boot
+        run: mvn clean package -DskipTests
+
+      # 4️⃣ Configurar credenciais AWS
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -21,9 +34,22 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Executar deploy na EC2 via SSM
+      # 5️⃣ Subir JAR para S3
+      - name: Upload JAR para S3
+        run: |
+          aws s3 cp target/*.jar s3://meu-bucket-deploy/app.jar --region ${{ secrets.AWS_REGION }}
+
+      # 6️⃣ Deploy na EC2 via SSM
+      - name: Deploy na EC2 via SSM
         run: |
           aws ssm send-command \
             --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
             --document-name "AWS-RunShellScript" \
-            --parameters '{"commands":["echo \"Deploy funcionando\"","hostname","date"]}'
+            --parameters '{
+              "commands": [
+                "mkdir -p /home/ec2-user/app",
+                "aws s3 cp s3://meu-bucket-deploy/app.jar /home/ec2-user/app/app.jar --region ${{ secrets.AWS_REGION }}",
+                "pkill -f app.jar || true",
+                "nohup java -jar /home/ec2-user/app/app.jar > /home/ec2-user/app/app.log 2>&1 &"
+              ]
+            }'
