@@ -3,7 +3,7 @@ name: Deploy Spring Boot via SSM
 on:
   push:
     branches:
-      - release # sua branch de deploy
+      - release   # sua branch de deploy
 
 jobs:
   deploy:
@@ -32,7 +32,7 @@ jobs:
           echo "Arquivos no target:"
           ls -l target/
           # Pega o primeiro JAR que existir
-          JAR_FILE=$(ls target/*.jar 2>/dev/null | head -n 1)
+          JAR_FILE=$(ls target/*.jar | head -n 1)
           if [ -z "$JAR_FILE" ]; then
             echo "Nenhum JAR encontrado, build falhou!"
             exit 1
@@ -48,7 +48,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 6️⃣ Subir JAR para S3 (usando secret)
+      # 6️⃣ Subir JAR para S3
       - name: Upload JAR para S3
         run: |
           echo "Upload do JAR para S3"
@@ -61,8 +61,8 @@ jobs:
             --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
             --document-name "AWS-RunShellScript" \
             --parameters "commands=[
-              'mkdir -p /home/ec2-user/app',
-              'aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/app.jar /home/ec2-user/app/app.jar --region ${{ secrets.AWS_REGION }}',
-              'pkill -f app.jar || true',
-              'nohup java -jar /home/ec2-user/app/app.jar > /home/ec2-user/app/app.log 2>&1 &'
+              \"mkdir -p /home/ec2-user/app\",
+              \"aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/app.jar /home/ec2-user/app/app.jar --region ${{ secrets.AWS_REGION }}\",
+              \"pkill -f app.jar || true\",
+              \"nohup java -jar /home/ec2-user/app/app.jar > /home/ec2-user/app/app.log 2>&1 &\"
             ]"
