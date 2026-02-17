@@ -31,7 +31,6 @@ jobs:
         run: |
           echo "Arquivos no target:"
           ls -l target/
-          # Pega o primeiro JAR que existir
           JAR_FILE=$(ls target/*.jar | head -n 1)
           if [ -z "$JAR_FILE" ]; then
             echo "Nenhum JAR encontrado, build falhou!"
@@ -62,6 +61,7 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --parameters "commands=[
               \"mkdir -p /home/ec2-user/app\",
+              \"sudo chown ec2-user:ec2-user /home/ec2-user/app\",
               \"aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/app.jar /home/ec2-user/app/app.jar --region ${{ secrets.AWS_REGION }}\",
               \"pkill -f app.jar || true\",
               \"nohup java -jar /home/ec2-user/app/app.jar > /home/ec2-user/app/app.log 2>&1 &\"
