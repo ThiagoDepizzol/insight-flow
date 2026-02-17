@@ -26,7 +26,11 @@ jobs:
       - name: Build Spring Boot
         run: mvn clean package -DskipTests
 
-      # 4️⃣ Configurar credenciais AWS
+      # 4️⃣ Verificar se o JAR foi criado
+      - name: Verificar JAR
+        run: ls -l target/
+
+      # 5️⃣ Configurar credenciais AWS
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -34,22 +38,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 5️⃣ Subir JAR para S3 (bucket via secret)
+      # 6️⃣ Subir JAR para S3 (usando secret)
       - name: Upload JAR para S3
-        run: |
-          aws s3 cp target/*.jar s3://${{ secrets.S3_BUCKET_NAME }}/app.jar --region ${{ secrets.AWS_REGION }}
+        run: aws s3 cp target/*.jar s3://${{ secrets.S3_BUCKET_NAME }}/app.jar --region ${{ secrets.AWS_REGION }}
 
-      # 6️⃣ Deploy na EC2 via SSM (usando bucket via secret)
+      # 7️⃣ Deploy na EC2 via SSM
       - name: Deploy na EC2 via SSM
         run: |
           aws ssm send-command \
             --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
             --document-name "AWS-RunShellScript" \
-            --parameters '{
-              "commands": [
-                "mkdir -p /home/ec2-user/app",
-                "aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/app.jar /home/ec2-user/app/app.jar --region ${{ secrets.AWS_REGION }}",
-                "pkill -f app.jar || true",
-                "nohup java -jar /home/ec2-user/app/app.jar > /home/ec2-user/app/app.log 2>&1 &"
-              ]
-            }'
+            --parameters "commands=[
+              'mkdir -p /home/ec2-user/app',
+              'aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/app.jar /home/ec2-user/app/app.jar --region ${{ secrets.AWS_REGION }}',
+              'pkill -f app.jar || true',
+              'nohup java -jar /home/ec2-user/app/app.jar > /home/ec2-user/app/app.log 2>&1 &'
+            ]"
