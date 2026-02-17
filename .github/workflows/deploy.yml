@@ -28,7 +28,17 @@ jobs:
 
       # 4️⃣ Verificar se o JAR foi criado
       - name: Verificar JAR
-        run: ls -l target/
+        run: |
+          echo "Arquivos no target:"
+          ls -l target/
+          # Pega o primeiro JAR que existir
+          JAR_FILE=$(ls target/*.jar 2>/dev/null | head -n 1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "Nenhum JAR encontrado, build falhou!"
+            exit 1
+          fi
+          echo "JAR encontrado: $JAR_FILE"
+          echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
 
       # 5️⃣ Configurar credenciais AWS
       - name: Configurar credenciais AWS
@@ -40,7 +50,9 @@ jobs:
 
       # 6️⃣ Subir JAR para S3 (usando secret)
       - name: Upload JAR para S3
-        run: aws s3 cp target/*.jar s3://${{ secrets.S3_BUCKET_NAME }}/app.jar --region ${{ secrets.AWS_REGION }}
+        run: |
+          echo "Upload do JAR para S3"
+          aws s3 cp "$JAR_FILE" s3://${{ secrets.S3_BUCKET_NAME }}/app.jar --region ${{ secrets.AWS_REGION }}
 
       # 7️⃣ Deploy na EC2 via SSM
       - name: Deploy na EC2 via SSM
