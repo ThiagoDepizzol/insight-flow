@@ -22,7 +22,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # 3️⃣ Buildar Spring Boot
+      # 3️⃣ Build Spring Boot (ignorar testes)
       - name: Build Spring Boot
         run: mvn clean package -DskipTests
 
