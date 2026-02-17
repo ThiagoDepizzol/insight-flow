@@ -1,49 +1,58 @@
-name: Deploy Spring Boot to EC2 Ubuntu
+name: Deploy Insight Flow to EC2
 
 on:
   push:
     branches:
-      - release
+      - main
 
 jobs:
-
   deploy:
-
     runs-on: ubuntu-latest
 
     steps:
 
-      - name: Checkout
+      # 1. Baixar o código do repositório
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Java
+
+      # 2. Configurar Java 21
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: corretto
+          distribution: temurin
           java-version: 21
 
-      - name: Build project
-        run: mvn clean package -DskipTests
 
-      - name: Copy jar to EC2
+      # 3. Build do projeto (SEM TESTES)
+      - name: Build project with Maven
+        run: mvn clean package -Dmaven.test.skip=true
+
+
+      # 4. Copiar o JAR para EC2
+      - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "target/*.jar"
-          target: "/home/ubuntu/app"
+          source: target/*.jar
+          target: /home/ubuntu/
 
-      - name: Run application
+
+      # 5. Parar app antiga e iniciar nova
+      - name: Restart application on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            
+
+            echo "Parando aplicação antiga..."
             pkill -f '.jar' || true
-            
-            cd /home/ubuntu/app
-            
-            nohup java -jar target/*.jar > app.log 2>&1 &
+
+            echo "Iniciando nova aplicação..."
+            nohup java -jar /home/ubuntu/target/*.jar > /home/ubuntu/app.log 2>&1 &
+
+            echo "Deploy finalizado com sucesso!"
