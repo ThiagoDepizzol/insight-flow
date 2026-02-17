@@ -1,9 +1,9 @@
-name: Deploy Insight Flow to EC2
+name: Deploy EC2 via SSM
 
 on:
   push:
     branches:
-      - release
+      - release   # ou sua branch
 
 jobs:
   deploy:
@@ -11,48 +11,19 @@ jobs:
 
     steps:
 
-      # 1. Baixar o código do repositório
-      - name: Checkout repository
+      - name: Checkout código
         uses: actions/checkout@v4
 
-
-      # 2. Configurar Java 21
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - name: Configurar credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          distribution: temurin
-          java-version: 21
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-
-      # 3. Build do projeto (SEM TESTES)
-      - name: Build project with Maven
-        run: mvn clean package -Dmaven.test.skip=true
-
-
-      # 4. Copiar o JAR para EC2
-      - name: Copy JAR to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: target/*.jar
-          target: /home/ubuntu/
-
-
-      # 5. Parar app antiga e iniciar nova
-      - name: Restart application on EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-
-            echo "Parando aplicação antiga..."
-            pkill -f '.jar' || true
-
-            echo "Iniciando nova aplicação..."
-            nohup java -jar /home/ubuntu/target/*.jar > /home/ubuntu/app.log 2>&1 &
-
-            echo "Deploy finalizado com sucesso!"
+      - name: Executar deploy na EC2 via SSM
+        run: |
+          aws ssm send-command \
+            --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="echo 'Deploy funcionando'; hostname; date"
