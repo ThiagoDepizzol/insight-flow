@@ -3,7 +3,7 @@ name: Deploy Insight Flow to EC2
 on:
   push:
     branches:
-      - realease
+      - release
 
 jobs:
   deploy:
