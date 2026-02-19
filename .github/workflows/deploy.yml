@@ -3,7 +3,7 @@ name: Deploy Spring Boot via SSM
 on:
   push:
     branches:
-      - release   # branch de deploy
+      - release
 
 jobs:
   deploy:
@@ -22,12 +22,12 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # 3️⃣ Build do projeto Spring Boot
+      # 3️⃣ Build do projeto
       - name: Build Spring Boot
         run: mvn clean package -DskipTests
 
-      # 4️⃣ Verificar se o JAR foi criado
-      - name: Verificar JAR
+      # 4️⃣ Localizar o JAR gerado
+      - name: Localizar JAR
         run: |
           echo "Conteúdo da pasta target:"
           ls -l target/
@@ -35,12 +35,12 @@ jobs:
           JAR_FILE=$(ls target/*.jar | head -n 1)
 
           if [ -z "$JAR_FILE" ]; then
-            echo "ERRO: Nenhum JAR encontrado!"
+            echo "ERRO: nenhum JAR encontrado"
             exit 1
           fi
 
-          echo "JAR encontrado: $JAR_FILE"
           echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
+          echo "JAR encontrado: $JAR_FILE"
 
       # 5️⃣ Configurar credenciais AWS
       - name: Configurar credenciais AWS
@@ -53,36 +53,36 @@ jobs:
       # 6️⃣ Upload do JAR para o S3
       - name: Upload JAR para S3
         run: |
-          echo "Enviando JAR para o S3..."
+          echo "Enviando app.jar para o S3..."
           aws s3 cp "$JAR_FILE" s3://${{ secrets.S3_BUCKET_NAME }}/app.jar
 
-      # 7️⃣ Deploy automático na EC2 via SSM
-      - name: Deploy na EC2 via SSM
+      # 7️⃣ Deploy na EC2 via SSM
+      - name: Deploy na EC2
         run: |
-          echo "Realizando deploy na EC2..."
+          echo "Executando deploy na EC2..."
 
           aws ssm send-command \
             --targets "Key=instanceIds,Values=${{ secrets.EC2_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --comment "Deploy Spring Boot App" \
+            --comment "Deploy Insight Flow App" \
             --parameters 'commands=[
-              "echo === INICIANDO DEPLOY ===",
+              "echo === INICIO DO DEPLOY ===",
               "sudo mkdir -p /home/ubuntu/app",
-              "echo Baixando novo app.jar do S3...",
+              "echo Baixando nova versão do S3...",
               "sudo aws s3 cp s3://'${{ secrets.S3_BUCKET_NAME }}'/app.jar /home/ubuntu/app/app.jar",
-              "echo Parando aplicação antiga...",
+              "echo Parando versão antiga...",
               "sudo pkill -f app.jar || true",
-              "echo Iniciando nova aplicação...",
+              "echo Iniciando nova versão...",
               "cd /home/ubuntu/app",
-              "sudo nohup java -jar app.jar > app.log 2>&1 &",
+              "sudo nohup env DB_URL='\''${{ secrets.DB_URL }}'\'' DB_USERNAME='\''${{ secrets.DB_USERNAME }}'\'' DB_PASSWORD='\''${{ secrets.DB_PASSWORD }}'\'' java -jar app.jar > app.log 2>&1 &",
               "sleep 10",
-              "echo === STATUS ===",
+              "echo === PROCESSOS JAVA ===",
               "ps aux | grep java",
               "echo === LOG ===",
               "tail -n 50 /home/ubuntu/app/app.log"
             ]' \
             --region ${{ secrets.AWS_REGION }}
 
-      # 8️⃣ Mensagem final
+      # 8️⃣ Final
       - name: Deploy finalizado
-        run: echo "Deploy concluído com sucesso!"
+        run: echo "Deploy realizado com sucesso!"
