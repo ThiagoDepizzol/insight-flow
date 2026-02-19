@@ -43,7 +43,12 @@ public class ReportExportService {
 
         logger.info("uploadFile() -> {}, {}", fileName, inputStream);
 
-        final String bucketName = "";
+        final String bucketName = System.getenv("S3_BUCKET_NAME");
+
+        // Validação de segurança simples
+        if (bucketName == null || bucketName.isEmpty()) {
+            throw new RuntimeException("S3_BUCKET_NAME not found.");
+        }
 
         final PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -54,7 +59,7 @@ public class ReportExportService {
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, inputStream.available()));
         } catch (IOException e) {
-            throw new RuntimeException("Erro ao enviar arquivo para S3", e);
+            throw new RuntimeException("Error send archive for S3", e);
         }
     }
 }

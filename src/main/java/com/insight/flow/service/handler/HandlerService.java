@@ -27,8 +27,7 @@ public class HandlerService implements RequestHandler<SQSEvent, Void> {
 
         logger.info("handleRequest() -> {}, {}", event, context);
 
-        // TODO: Arrumar o string com a fila certa
-        final String weeklyReportLambda = "";
+        final String weeklyReportLambda = System.getenv("SQS_QUEUE_ARN");
 
         event.getRecords()
                 .forEach(record -> {
