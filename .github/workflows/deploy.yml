@@ -3,7 +3,7 @@ name: Deploy Spring Boot via SSM
 on:
   push:
     branches:
-      - release  #  Branch de deploy
+      - release
 
 jobs:
   deploy:
@@ -11,22 +11,22 @@ jobs:
 
     steps:
 
-      # 1️⃣ Checkout do código
+      # Checkout do código
       - name: Checkout código
         uses: actions/checkout@v4
 
-      # 2️⃣ Configurar Java 21
+      # Configurar Java 21
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
-      # 3️⃣ Build do projeto
+      # Build do projeto
       - name: Build Spring Boot
         run: mvn clean package -DskipTests
 
-      # 4️⃣ Localizar o JAR gerado
+      # Localizar o JAR gerado
       - name: Localizar JAR
         run: |
           echo "Conteúdo da pasta target:"
@@ -42,7 +42,7 @@ jobs:
           echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
           echo "JAR encontrado: $JAR_FILE"
 
-      # 5️⃣ Configurar credenciais AWS
+      # Configurar credenciais AWS
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -50,13 +50,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 6️⃣ Upload do JAR para o S3
+      # Upload do JAR para o S3
       - name: Upload JAR para S3
         run: |
           echo "Enviando app.jar para o S3..."
           aws s3 cp "$JAR_FILE" s3://${{ secrets.S3_BUCKET_NAME }}/app.jar
 
-      # 7️⃣ Deploy na EC2 via SSM
+      # Deploy na EC2 via SSM
       - name: Deploy na EC2
         run: |
           echo "Executando deploy na EC2..."
@@ -83,6 +83,6 @@ jobs:
             ]' \
             --region ${{ secrets.AWS_REGION }}
 
-      # 8️⃣ Final
+      # Final
       - name: Deploy finalizado
         run: echo "Deploy realizado com sucesso!"
